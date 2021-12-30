@@ -1,0 +1,68 @@
+#:kivy 2.0.0
+#: set input_widget_size '100dp', '44dp'
+
+Main:
+
+
+<CustomText@TextInput>:
+    size_hint: None, None
+    size: input_widget_size
+    pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+
+<Spinner>:
+    size_hint: None, None
+    size: input_widget_size
+    pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+
+
+<Main@BoxLayout>:
+    orientation: 'vertical'
+    spacing: '20dp'
+    padding: '20dp'
+    BoxLayout:
+        # size_hint_y: None
+        # size_y: '36dp'
+        orientation: 'horizontal'
+        Label:
+            text: 'Usecase'
+        BoxLayout:
+            orientation: 'horizontal'
+            Spinner:
+                text: '1.3'
+                values: '1.3', '3.5', '3.6'
+    
+    BoxLayout:
+        orientation: 'horizontal'
+        Label:
+            text: 'Probes'
+            pos_hint: {'center_y': 0.5}
+            # size_hint: None, None
+            # size: self.texture_size
+            # canvas.before:
+            #     Color:
+            #         rgba: 1, 0, 0, 1
+            #     Rectangle:
+            #         pos: self.pos
+            #         size: self.size
+
+        BoxLayout:
+            orientation: 'horizontal'
+            Label:
+                text: 'Src'
+            CustomText:
+            Label:
+                text: 'Dst'
+            CustomText:
+    
+    BoxLayout:
+        orientation: 'horizontal'
+        Label:
+            text: 'Test Campaign ID'
+        BoxLayout:
+            orientation: 'horizontal'
+            CustomText:
+    Button:
+        text: 'Start'
+        size_hint: None, None
+        size: '240dp', '50dp'
+        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
