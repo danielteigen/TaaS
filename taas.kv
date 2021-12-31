@@ -3,6 +3,12 @@
 
 Main:
 
+<HorizontalBoxLayout@BoxLayout>:
+    orientation: 'horizontal'
+    spacing: dp(16)
+
+<BoxLayout>:
+    spacing: dp(16)
 
 <CustomText@TextInput>:
     size_hint: None, None
@@ -14,16 +20,46 @@ Main:
     size: input_widget_size
     pos_hint: {'center_x': 0.5, 'center_y': 0.5}
 
+<MainLabel@Label>:
+    pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+    size_hint_x: None
+    width: max(self.texture_size[0], dp(150))
+    bold: True
+    # Right border
+    border_width: 1
+    canvas:
+        Color:
+            rgb: 0, 0, 0
+        Rectangle:
+            pos: self.x + self.width - self.border_width, self.y
+            size: self.border_width, self.height
+    # Background color
+    # canvas.before:
+    #     Color:
+    #         rgba: 1, 0, 0, 1
+    #     Rectangle:
+    #         pos: self.pos
+    #         size: self.size
+
+<SubLabel@Label>:
+    pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+    # pos_hint: {'center_y': 0.5}
+    size_hint_x: None
+    size: self.texture_size
+    # canvas.before:
+    #     Color:
+    #         rgba: 0, 1, 0, 1
+    #     Rectangle:
+    #         pos: self.pos
+    #         size: self.size
 
 <Main@BoxLayout>:
     orientation: 'vertical'
-    spacing: '20dp'
+    spacing: '0dp'
     padding: '20dp'
     BoxLayout:
-        # size_hint_y: None
-        # size_y: '36dp'
         orientation: 'horizontal'
-        Label:
+        MainLabel:
             text: 'Usecase'
         BoxLayout:
             orientation: 'horizontal'
@@ -33,31 +69,24 @@ Main:
     
     BoxLayout:
         orientation: 'horizontal'
-        Label:
+        MainLabel:
             text: 'Probes'
-            pos_hint: {'center_y': 0.5}
-            # size_hint: None, None
-            # size: self.texture_size
-            # canvas.before:
-            #     Color:
-            #         rgba: 1, 0, 0, 1
-            #     Rectangle:
-            #         pos: self.pos
-            #         size: self.size
-
         BoxLayout:
             orientation: 'horizontal'
-            Label:
+            spacing: dp(32)
+            SubLabel:
                 text: 'Src'
             CustomText:
-            Label:
+            SubLabel:
                 text: 'Dst'
             CustomText:
     
     BoxLayout:
         orientation: 'horizontal'
-        Label:
+        MainLabel:
+            id: lbl1
             text: 'Test Campaign ID'
+
         BoxLayout:
             orientation: 'horizontal'
             CustomText:
