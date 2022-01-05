@@ -3,13 +3,17 @@ from kivy.uix.widget import Widget
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.textinput import TextInput
+from kivy.uix.label import Label
 from kivy.metrics import dp
 from kivy.core.window import Window
+from kivy.properties import BooleanProperty
 
 import taas
 
 
 class TaaSGUIApp(App):
+    disable_buttons = BooleanProperty(taas.auth_token is None)
+
     def log(self, text, append=False):
         """Write something to the log box"""
         if append:
@@ -19,11 +23,27 @@ class TaaSGUIApp(App):
     def on_auth(self, username, password):
         self.log('Getting auth token...')
         r = taas.get_auth_token(username, password)
+        self.disable_buttons = False
         self.log(r, append=True)
 
     def on_get_campaigns(self, name):
         self.log('Getting test campaigns...')
         r = taas.get_test_campaigns(name)
+        self.log(r, append=True)
+
+    def on_excute(self, campaign_id, campaign_revision):
+        self.log('Executing test campaign...')
+        r = taas.execute_test_campaign(campaign_id, campaign_revision)
+        self.log(r, append=True)
+
+    def on_stop(self):
+        self.log('Stopping test campaign...')
+        r = taas.stop_running_test_campaign()
+        self.log(r, append=True)
+
+    def on_status(self):
+        self.log('Getting test status...')
+        r = taas.get_test_campaign_status()
         self.log(r, append=True)
 
 

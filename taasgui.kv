@@ -1,13 +1,16 @@
 #:kivy 2.0.0
-#: set input_widget_size '100dp', '44dp'
+#: set input_widget_size '100dp', '36dp'
 
 MainWidget:
 
 <HorizontalBoxLayout@BoxLayout>:
     orientation: 'horizontal'
 
+<VerticalBoxLayout@BoxLayout>:
+    orientation: 'vertical'
+
 <BoxLayout>:
-    spacing: dp(16)
+    spacing: dp(18)
 
 <BorderedBox@BoxLayout>:
     border_width: 1
@@ -17,12 +20,15 @@ MainWidget:
             rgba: 0, 0, 0, 0.5
         Line:
             width: 1
-            rectangle: self.x, self.y + 0.1*self.height, self.width, 0.8*self.height
+            rectangle: self.x, self.y, self.width, self.height
+            # rectangle: self.x, self.y + 0.1*self.height, self.width, 0.8*self.height
 
 <CustomText@TextInput>:
     size_hint: None, None
     size: input_widget_size
     pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+    font_size: sp(16)
+    padding_y: [self.height / 2.0 - (self.line_height / 2.0) * len(self._lines), 0]
 
 <Spinner>:
     size_hint: None, None
@@ -32,11 +38,6 @@ MainWidget:
 <SmallButton@Button>:
     size_hint_y: None
     size: input_widget_size
-    pos_hint: {'center_x': 0.5, 'center_y': 0.5}
-
-<BigButton@Button>:
-    size_hint: None, None
-    size: '240dp', '50dp'
     pos_hint: {'center_x': 0.5, 'center_y': 0.5}
 
 <Separator@Widget>:
@@ -50,38 +51,24 @@ MainWidget:
             pos: self.x + self.width - self.border_width, self.y
             size: self.border_width, self.height
 
-<MainLabel@Label>:
+<RedBackground@Widget>:
+    canvas.before:
+        Color:
+            rgba: 1, 0, 0, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+<MainLabel@Label+Separator>:
     pos_hint: {'center_x': 0.5, 'center_y': 0.5}
     size_hint_x: None
-    width: max(self.texture_size[0], dp(150))
+    width: max(self.texture_size[0], dp(130))
     bold: True
-    # Right border
-    border_width: 1
-    canvas:
-        Color:
-            rgb: 0, 0, 0
-        Rectangle:
-            pos: self.x + self.width - self.border_width, self.y
-            size: self.border_width, self.height
-    # Background color
-    # canvas.before:
-    #     Color:
-    #         rgba: 1, 0, 0, 1
-    #     Rectangle:
-    #         pos: self.pos
-    #         size: self.size
 
 <SubLabel@Label>:
     pos_hint: {'center_x': 0.5, 'center_y': 0.5}
-    # pos_hint: {'center_y': 0.5}
     size_hint_x: None
     size: self.texture_size
-    # canvas.before:
-    #     Color:
-    #         rgba: 0, 1, 0, 1
-    #     Rectangle:
-    #         pos: self.pos
-    #         size: self.size
 
 ###########################################################
 
@@ -123,17 +110,33 @@ MainWidget:
             SubLabel:
                 text: 'Source'
             CustomText:
+                id: probe_src
             SubLabel:
                 text: 'Destination'
             CustomText:
+                id: probe_dst
     
     HorizontalBoxLayout:
+        size_hint_y: 2
         MainLabel:
             id: lbl1
-            text: 'Test Campaign ID'
-        HorizontalBoxLayout:
-            CustomText:
-            BorderedBox:
+            text: 'Test Campaign'
+        BorderedBox:
+            orientation: 'vertical'
+        # VerticalBoxLayout:
+            spacing: dp(16), 0
+            HorizontalBoxLayout:
+                SubLabel:
+                    text: 'ID'
+                CustomText:
+                    id: campaign_id
+                    width: dp(350)
+                    text: 'e4b5892c-ae3d-404c-8f04-ead99db822f5'
+                SubLabel:
+                    text: 'Revision'
+                CustomText:
+                    id: campaign_revision
+            HorizontalBoxLayout:
                 SubLabel:
                     text: 'Filter'
                 CustomText:
@@ -141,6 +144,7 @@ MainWidget:
                 SmallButton:
                     text: 'Get available test campaigns'
                     on_press: app.on_get_campaigns(campaign_filter.text)
+                    disabled: app.disable_buttons
 
     HorizontalBoxLayout:
         SmallButton:
@@ -148,18 +152,30 @@ MainWidget:
             on_press: app.on_auth(username, password)
         SmallButton:
             text: 'Excute'
+            disabled: app.disable_buttons
+            on_press: app.on_excute(campaign_id.text, campaign_revision.text)
         SmallButton:
             text: 'Stop'
+            disabled: app.disable_buttons
+            on_press: app.on_stop()
         SmallButton:
             text: 'Status'
+            disabled: app.disable_buttons
+            on_press: app.on_status()
     
-    ScrollView:
-        id: scrlv
-        TextInput:
-            id: log
-            background_color: (0, 0, 0, 1)
-            foreground_color: (0, 1, 0, 1)
-            multiline: True           
-            # readonly: True
-            size_hint_y: None
-            height: self.minimum_height
+    TextInput:
+        size_hint_y: 3
+        id: log
+        background_color: (0, 0, 0, 1)
+        foreground_color: (0, 1, 0, 1)
+        multiline: True           
+    # ScrollView:
+    #     id: scrlv
+    #     TextInput:
+    #         id: log
+    #         background_color: (0, 0, 0, 1)
+    #         foreground_color: (0, 1, 0, 1)
+    #         multiline: True           
+    #         # readonly: True
+    #         size_hint_y: None
+    #         height: scrlv.height
