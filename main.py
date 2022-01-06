@@ -1,3 +1,4 @@
+from kivy import app
 from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.uix.boxlayout import BoxLayout
@@ -10,9 +11,36 @@ from kivy.properties import BooleanProperty
 
 import taas
 
+settings_panel = """
+[
+    { "type": "title",
+      "title": "Login" },
+
+    { "type": "string",
+      "title": "Username",
+      "section": "login",
+      "key": "username"},
+
+    { "type": "string",
+      "title": "Password",
+      "section": "login",
+      "key": "password"}
+]
+"""
+
 
 class TaaSGUIApp(App):
     disable_buttons = BooleanProperty(taas.auth_token is None)
+
+    def build_config(self, config):
+        config.setdefaults('login', {
+            'Username': '',
+            'Password': '',
+        })
+
+    def build_settings(self, settings):
+        settings.add_json_panel(
+            'App Settings', self.config, data=settings_panel)
 
     def log(self, text, append=False):
         """Write something to the log box"""
@@ -20,8 +48,13 @@ class TaaSGUIApp(App):
             text = f'{self.root.ids.log.text}\n{str(text)}'
         self.root.ids.log.text = str(text)
 
-    def on_auth(self, username, password):
+    def on_auth(self):
         self.log('Getting auth token...')
+        username = self.config.get('login', 'username')
+        password = self.config.get('login', 'password')
+        if not username or not password:
+            self.log('Enter username and password in the settings', append=True)
+            return
         r = taas.get_auth_token(username, password)
         self.disable_buttons = False
         self.log(r, append=True)
