@@ -88,39 +88,22 @@ MainWidget:
                 values: '1.3', '3.5', '3.6'
 
     HorizontalBoxLayout:
-        MainLabel:
-            text: 'Probes'
-        HorizontalBoxLayout:
-            spacing: dp(32)
-            SubLabel:
-                text: 'Source'
-            CustomText:
-                id: probe_src
-            SubLabel:
-                text: 'Destination'
-            CustomText:
-                id: probe_dst
-
-    HorizontalBoxLayout:
         size_hint_y: 2
         MainLabel:
             id: lbl1
             text: 'Test Campaign'
         BorderedBox:
             orientation: 'vertical'
-        # VerticalBoxLayout:
             spacing: dp(16), 0
             HorizontalBoxLayout:
                 SubLabel:
-                    text: 'ID'
-                CustomText:
-                    id: campaign_id
-                    width: dp(350)
-                    text: 'e4b5892c-ae3d-404c-8f04-ead99db822f5'
-                SubLabel:
-                    text: 'Revision'
-                CustomText:
-                    id: campaign_revision
+                    text: 'Name'
+                Spinner:
+                    id: campaign_spinner
+                    text_autoupdate: True
+                    size_hint_y: None
+                    size: input_widget_size
+                    pos_hint: {'center_x': 0.5, 'center_y': 0.5}
             HorizontalBoxLayout:
                 SubLabel:
                     text: 'Filter'
@@ -138,7 +121,7 @@ MainWidget:
         SmallButton:
             text: 'Excute'
             disabled: app.disable_buttons
-            on_press: app.on_excute(campaign_id.text, campaign_revision.text)
+            on_press: app.on_excute(campaign_spinner.text)
         SmallButton:
             text: 'Stop'
             disabled: app.disable_buttons

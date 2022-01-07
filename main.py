@@ -1,10 +1,15 @@
-from kivy import app
+import json
+from types import SimpleNamespace
+from typing import List
+
 from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.textinput import TextInput
 from kivy.uix.label import Label
+from kivy.uix.spinner import Spinner
+from kivy.uix.dropdown import DropDown
 from kivy.metrics import dp
 from kivy.core.window import Window
 from kivy.properties import BooleanProperty
@@ -31,6 +36,14 @@ settings_panel = """
 
 class TaaSGUIApp(App):
     disable_buttons = BooleanProperty(taas.auth_token is None)
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    # def on_start(self):
+        # data = '[{"id": "1", "name": "jack", "description": "", "revision": 0, "templateVersion": "", "tags": [""]}]'
+        # j: List[taas.TestCampaign] = json.loads(
+        #     data, object_hook=lambda d: taas.TestCampaign(**d))
 
     def build_config(self, config):
         config.setdefaults('login', {
@@ -61,12 +74,20 @@ class TaaSGUIApp(App):
 
     def on_get_campaigns(self, name):
         self.log('Getting test campaigns...')
-        r = taas.get_test_campaigns(name)
+        success, r = taas.get_test_campaigns(name)
         self.log(r, append=True)
+        if success:
+            # Parse the json result as a list of campaigns
+            campaigns: List[taas.TestCampaign] = json.loads(
+                r, object_hook=lambda d: taas.TestCampaign(**d))
+            taas.campaigns.clear()
+            for campaign in campaigns:
+                taas.campaigns[campaign.name] = campaign
+            self.root.ids.campaign_spinner.values = taas.campaigns.keys()
 
-    def on_excute(self, campaign_id, campaign_revision):
+    def on_excute(self, campaign_name):
         self.log('Executing test campaign...')
-        r = taas.execute_test_campaign(campaign_id, campaign_revision)
+        r = taas.execute_test_campaign(campaign_name)
         self.log(r, append=True)
 
     def on_stop(self):
