@@ -30,20 +30,21 @@ class TestCampaign(object):
 campaigns: dict[str, TestCampaign] = {}
 
 
-def get_auth_token(username: str, password: str) -> str:
+def get_auth_token(username: str, password: str) -> Tuple[bool, str]:
+    """Returns (success, result)"""
     global auth_token
     headers = {
         'username': username,
         'password': password,
     }
     try:
-        response = requests.get(URLs['auth'], headers=headers)
+        response = requests.get(URLs['auth'], headers=headers, timeout=10)
         if response.status_code == 200:
             auth_token = response.text
-            return 'Auth token received'
-        return response.text
+            return True, 'Auth token received'
+        return False, response.text
     except Exception as e:
-        return f'Connection failed. Check VPN connectivity:\n{e}'
+        return False, f'Connection failed. Check VPN connectivity:\n{e}'
 
 
 def get_test_campaigns(name: str) -> Tuple[bool, str]:
