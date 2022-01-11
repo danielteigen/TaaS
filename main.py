@@ -1,9 +1,6 @@
 import json
-from types import SimpleNamespace
 from typing import List, NoReturn
 
-from kivy.app import App
-from kivy.lang.builder import Builder
 from kivy.uix.widget import Widget
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
@@ -29,16 +26,29 @@ import taas
 settings_panel = """
 [
     { "type": "title",
-      "title": "Login" },
+      "title": "TaaS Login" },
 
     { "type": "string",
       "title": "Username",
-      "section": "login",
+      "section": "taas-login",
       "key": "username"},
 
     { "type": "string",
       "title": "Password",
-      "section": "login",
+      "section": "taas-login",
+      "key": "password"},
+
+    { "type": "title",
+      "title": "KPI-VS Login" },
+
+    { "type": "string",
+      "title": "Username",
+      "section": "kpi-vs-login",
+      "key": "username"},
+
+    { "type": "string",
+      "title": "Password",
+      "section": "kpi-vs-login",
       "key": "password"}
 ]
 """
@@ -83,13 +93,18 @@ class TaaSGUIApp(MDApp):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         # self.theme_cls.theme_style = "Dark"
+        MDRaisedButton().size_hint_min
 
     def on_start(self):
         pass
         self.theme_cls.primary_palette = "Indigo"
 
     def build_config(self, config):
-        config.setdefaults('login', {
+        config.setdefaults('taas-login', {
+            'Username': '',
+            'Password': '',
+        })
+        config.setdefaults('kpi-vs-login', {
             'Username': '',
             'Password': '',
         })
@@ -106,10 +121,11 @@ class TaaSGUIApp(MDApp):
 
     def on_auth(self):
         self.log('Getting auth token...')
-        username = self.config.get('login', 'username')
-        password = self.config.get('login', 'password')
+        username = self.config.get('taas-login', 'username')
+        password = self.config.get('taas-login', 'password')
         if not username or not password:
-            self.log('Enter username and password in the settings', append=True)
+            self.log(
+                'Enter TaaS username and password in the settings', append=True)
             return
         success, r = taas.get_auth_token(username, password)
         if success:
@@ -144,6 +160,24 @@ class TaaSGUIApp(MDApp):
         r = taas.get_test_campaign_status()
         self.log(r, append=True)
 
+    def on_send_kpi_vs(self, usecase):
+        self.log('Sending test data to KPI-VS...')
+        username = self.config.get('kpi-vs-login', 'username')
+        password = self.config.get('kpi-vs-login', 'password')
+        if not username or not password:
+            self.log(
+                'Enter KPI-VS username and password in the settings', append=True)
+            return
+
+        test_id = taas.running_test_id
+        if not test_id:
+            self.log('Error: there is no running test', append=True)
+            return
+
+        result = taas.get_test_campaign_status(
+            username, password, test_id, usecase)
+        self.log(result, append=True)
+
 
 def main():
     Window.top, Window.left = (100, 100)
@@ -153,4 +187,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-    # x = AsyncImage(source='https://i.stack.imgur.com/gN9W5.png')
