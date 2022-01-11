@@ -1,27 +1,16 @@
 import json
 from typing import List, NoReturn
 
-from kivy.uix.widget import Widget
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.button import Button
-from kivy.uix.textinput import TextInput
-from kivy.uix.label import Label
-from kivy.uix.spinner import Spinner
-from kivy.uix.dropdown import DropDown
 from kivy.metrics import dp
 from kivy.core.window import Window
 from kivy.properties import BooleanProperty, ListProperty
 
 from kivymd.app import MDApp
-from kivymd.uix.toolbar import MDToolbar
-from kivymd.uix.button import MDRaisedButton
-from kivymd.uix.dropdownitem import MDDropDownItem
 from kivymd.uix.textfield import MDTextField
 from kivymd.uix.menu import MDDropdownMenu
-# from kivymd.theming import ThemeManager, colors
-from kivymd.color_definitions import colors
-import kivymd
+
 import taas
+import kpi_vs
 
 settings_panel = """
 [
@@ -93,7 +82,6 @@ class TaaSGUIApp(MDApp):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         # self.theme_cls.theme_style = "Dark"
-        MDRaisedButton().size_hint_min
 
     def on_start(self):
         pass
@@ -174,7 +162,7 @@ class TaaSGUIApp(MDApp):
             self.log('Error: there is no running test', append=True)
             return
 
-        result = taas.get_test_campaign_status(
+        result = kpi_vs.send_requst(
             username, password, test_id, usecase)
         self.log(result, append=True)
 

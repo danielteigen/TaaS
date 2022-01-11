@@ -127,7 +127,7 @@ MainWidget:
                 on_press: app.on_status()
             SmallButton:
                 text: 'Send to KPI-VS'
-                # disabled: app.disable_buttons
+                disabled: app.disable_buttons
                 on_press: app.on_send_kpi_vs(usecase.text)
 
         TextInput:
